@@ -23,34 +23,63 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [filtro, setFiltro] = useState("")
 
-  // useEffect() => {
-  //   () => {
+  useEffect(
+    () => {
+      if(tarefas.length > 0) {
+        const tarefasEmString = JSON.stringify(tarefas)
+        localStorage.setItem("ArrayDeTarefas", tarefasEmString)
+      }
+    }, 
+    [tarefas]
+  );
 
-  //   },
-  //   []
-  // };
-
-  // useEffect() => {
-  //   () => {
-
-  //   },
-  //   []
-  // };
+  useEffect(
+    () => {
+      const lista = JSON.parse(localStorage.getItem("ArrayDeTarefas"))
+      if(lista.length > 0){
+        setTarefa(lista)
+      }     
+    },
+    []
+  );
 
   const onChangeInput = (event) => {
-    console.log("aaa");
+    setInputValue(event.target.value)
+
+    console.log(inputValue);
   }
 
   const criaTarefa = () => {
-    console.log("aaa");
+    const addTarefa = {
+      id: Date.now(),
+      texto: inputValue,
+      completa: false
+    }
+    const novaListaDeTarefas = [...tarefas, addTarefa]
+    setTarefa(novaListaDeTarefas)
+    setInputValue("")
+    console.log(tarefas);
   }
 
   const selectTarefa = (id) => {
-    console.log("aaa");
+    const listaDeTarefas = tarefas.map((tarefa) => {
+      if(id === tarefa.id) {
+        const novaTarefa = {
+          ...tarefa,
+          completa: !tarefa.completa
+        }
+        return novaTarefa
+      } else {
+        return tarefa
+      }
+    })
+    setTarefa(listaDeTarefas)
   }
+  // console.log(tarefas);
 
   const onChangeFilter = (event) => {
-    console.log("aaa");
+    setFiltro(event.target.value)
+    console.log(filtro);
   }
 
 
@@ -87,6 +116,7 @@ function App() {
         {listaFiltrada.map(tarefa => {
           return (
             <Tarefa
+              key={tarefa.id}
               completa={tarefa.completa}
               onClick={() => selectTarefa(tarefa.id)}
             >
